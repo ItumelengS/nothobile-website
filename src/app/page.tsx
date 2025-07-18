@@ -44,7 +44,9 @@ export default function Home() {
               title="Human Wellness"
               icon={<span className="text-2xl">🧘‍♀️</span>}
               href="/products?section=wellness"
-              gradient="from-green-500 to-green-600"
+              gradient="from-green-900/80 to-green-800/80"
+              image="humanW.jpg"
+              moveDown="30%"
               categories={humanWellnessCategories}
             />
             
@@ -52,7 +54,9 @@ export default function Home() {
               title="Animal Wellness"
               icon={<span className="text-2xl">🐾</span>}
               href="/products?section=animal"
-              gradient="from-blue-500 to-blue-600"
+              gradient="from-blue-900/80 to-blue-800/80"
+              image="animalW.jpg"
+              moveDown="20%"
               categories={animalWellnessCategories}
             />
           </div>
