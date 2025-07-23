@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { ProductCard } from '@/components/ProductCard';
 import { ProductSearch } from '@/components/ProductSearch';
 import { ArrowLeft } from 'lucide-react';
-import { Suspense, useEffect, useState, useMemo } from 'react';
+import { Suspense, useEffect, useState, useMemo, useCallback } from 'react';
 
 interface Product {
   id: number;
@@ -38,11 +38,7 @@ function ProductsContent() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState<FilterOptions>({});
   
-  useEffect(() => {
-    loadProducts();
-  }, [section]); // loadProducts is stable and doesn't need to be in deps
-  
-  const loadProducts = async () => {
+  const loadProducts = useCallback(async () => {
     try {
       setLoading(true);
       const url = section ? `/api/products?section=${section}` : '/api/products';
@@ -89,7 +85,11 @@ function ProductsContent() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [section]);
+  
+  useEffect(() => {
+    loadProducts();
+  }, [loadProducts]);
   
   // Filter and sort products
   const filteredProducts = useMemo(() => {

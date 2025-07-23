@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Plus, Edit2, Trash2, MapPin, Home } from 'lucide-react';
@@ -29,15 +29,7 @@ export default function AddressesPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingAddress, setEditingAddress] = useState<ShippingAddress | null>(null);
 
-  useEffect(() => {
-    if (!authLoading && !user) {
-      router.push('/auth/login');
-    } else if (user) {
-      fetchAddresses();
-    }
-  }, [user, authLoading, router]);
-
-  const fetchAddresses = async () => {
+  const fetchAddresses = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('shipping_addresses')
@@ -53,7 +45,15 @@ export default function AddressesPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user?.id]);
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/auth/login');
+    } else if (user) {
+      fetchAddresses();
+    }
+  }, [user, authLoading, router, fetchAddresses]);
 
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this address?')) return;

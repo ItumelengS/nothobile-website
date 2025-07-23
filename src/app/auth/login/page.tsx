@@ -34,8 +34,9 @@ export default function LoginPage() {
         setUser(data.user);
         router.push('/');
       }
-    } catch (error: any) {
-      setError(error.message || 'Failed to sign in');
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to sign in';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -55,8 +56,9 @@ export default function LoginPage() {
       if (error) throw error;
       
       alert('Password reset email sent! Please check your inbox.');
-    } catch (error: any) {
-      setError(error.message || 'Failed to send reset email');
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to send reset email';
+      setError(errorMessage);
     }
   };
 

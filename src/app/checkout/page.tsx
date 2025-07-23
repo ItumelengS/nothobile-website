@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, MapPin, Plus, CreditCard, Package } from 'lucide-react';
@@ -31,25 +31,7 @@ export default function CheckoutPage() {
   const [processing, setProcessing] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('cod'); // Cash on Delivery
 
-  useEffect(() => {
-    if (!authLoading) {
-      if (!user) {
-        // For guest checkout, redirect to a guest checkout page
-        router.push('/checkout/guest');
-      } else {
-        fetchAddresses();
-      }
-    }
-  }, [user, authLoading, router]);
-
-  useEffect(() => {
-    // If cart is empty, redirect to cart page
-    if (cartItems.length === 0 && !loading) {
-      router.push('/cart');
-    }
-  }, [cartItems, loading, router]);
-
-  const fetchAddresses = async () => {
+  const fetchAddresses = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('shipping_addresses')
@@ -73,7 +55,25 @@ export default function CheckoutPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user?.id]);
+
+  useEffect(() => {
+    if (!authLoading) {
+      if (!user) {
+        // For guest checkout, redirect to a guest checkout page
+        router.push('/checkout/guest');
+      } else {
+        fetchAddresses();
+      }
+    }
+  }, [user, authLoading, router, fetchAddresses]);
+
+  useEffect(() => {
+    // If cart is empty, redirect to cart page
+    if (cartItems.length === 0 && !loading) {
+      router.push('/cart');
+    }
+  }, [cartItems, loading, router]);
 
   const handlePlaceOrder = async () => {
     if (!selectedAddressId) {
