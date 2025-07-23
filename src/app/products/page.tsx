@@ -110,11 +110,11 @@ function ProductsContent() {
     }
     
     // Apply price filter
-    if (filters.minPrice) {
-      filtered = filtered.filter(p => p.current_price >= filters.minPrice);
+    if (filters.minPrice !== undefined) {
+      filtered = filtered.filter(p => p.current_price >= filters.minPrice!);
     }
-    if (filters.maxPrice) {
-      filtered = filtered.filter(p => p.current_price <= filters.maxPrice);
+    if (filters.maxPrice !== undefined) {
+      filtered = filtered.filter(p => p.current_price <= filters.maxPrice!);
     }
     
     // Apply stock filter
