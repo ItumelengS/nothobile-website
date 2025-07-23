@@ -127,9 +127,12 @@ export default function CartPage() {
                 </div>
               </div>
               
-              <button className="w-full bg-amber text-earth-dark py-3 rounded-md hover:bg-amber-light font-semibold transition-all transform hover:scale-105 shadow-md">
+              <Link
+                href="/checkout"
+                className="block w-full bg-amber text-earth-dark py-3 rounded-md hover:bg-amber-light font-semibold transition-all transform hover:scale-105 shadow-md text-center"
+              >
                 Proceed to Checkout
-              </button>
+              </Link>
               
               <p className="text-xs text-muted-foreground text-center mt-4">
                 Secure checkout powered by Nothobile

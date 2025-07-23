@@ -1,95 +1,131 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { supabase } from '@/lib/supabase';
+import { User } from '@supabase/supabase-js';
 
-interface User {
+interface UserProfile {
   id: string;
   email: string;
-  name: string;
+  full_name?: string;
+  phone?: string;
   role: 'customer' | 'admin' | 'owner';
 }
 
 interface AuthContextType {
   user: User | null;
+  userProfile: UserProfile | null;
   loading: boolean;
-  login: (email: string) => Promise<void>;
-  logout: () => void;
-  register: (email: string, name: string) => Promise<void>;
+  setUser: (user: User | null) => void;
+  logout: () => Promise<void>;
+  isAdmin: () => boolean;
+  isOwner: () => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Check for existing session on mount
   useEffect(() => {
-    // Check if user is logged in (from localStorage or session)
-    const savedUser = localStorage.getItem('nothobile-user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
-    setLoading(false);
+    checkUser();
+    
+    // Set up auth state change listener
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (session?.user) {
+        setUser(session.user);
+        await fetchUserProfile(session.user.id);
+      } else {
+        setUser(null);
+        setUserProfile(null);
+      }
+    });
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
   }, []);
 
-  const login = async (email: string) => {
-    setLoading(true);
+  const checkUser = async () => {
     try {
-      // In a real app, this would make an API call
-      // For now, we'll simulate login
-      const mockUser: User = {
-        id: '1',
-        email,
-        name: email.split('@')[0],
-        role: email.includes('admin') ? 'admin' : email.includes('owner') ? 'owner' : 'customer',
-      };
-      
-      setUser(mockUser);
-      localStorage.setItem('nothobile-user', JSON.stringify(mockUser));
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+      if (user) {
+        await fetchUserProfile(user.id);
+      }
     } catch (error) {
-      console.error('Login failed:', error);
-      throw error;
+      console.error('Error checking user session:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('nothobile-user');
+  const fetchUserProfile = async (userId: string) => {
+    try {
+      // First check if profile exists
+      const { data: existingProfile, error: fetchError } = await supabase
+        .from('user_profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+      if (fetchError && fetchError.code === 'PGRST116') {
+        // Profile doesn't exist, create one
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: newProfile, error: insertError } = await supabase
+            .from('user_profiles')
+            .insert([
+              {
+                id: userId,
+                email: user.email,
+                full_name: user.user_metadata?.full_name || '',
+                phone: user.user_metadata?.phone || '',
+                role: 'customer',
+              },
+            ])
+            .select()
+            .single();
+
+          if (insertError) throw insertError;
+          setUserProfile(newProfile);
+        }
+      } else if (existingProfile) {
+        setUserProfile(existingProfile);
+      }
+    } catch (error) {
+      console.error('Error fetching/creating user profile:', error);
+    }
   };
 
-  const register = async (email: string, name: string) => {
-    setLoading(true);
+  const logout = async () => {
     try {
-      // In a real app, this would make an API call
-      const mockUser: User = {
-        id: Date.now().toString(),
-        email,
-        name,
-        role: 'customer',
-      };
-      
-      setUser(mockUser);
-      localStorage.setItem('nothobile-user', JSON.stringify(mockUser));
+      await supabase.auth.signOut();
+      setUser(null);
+      setUserProfile(null);
     } catch (error) {
-      console.error('Registration failed:', error);
-      throw error;
-    } finally {
-      setLoading(false);
+      console.error('Error signing out:', error);
     }
+  };
+
+  const isAdmin = () => userProfile?.role === 'admin' || userProfile?.role === 'owner';
+  const isOwner = () => userProfile?.role === 'owner';
+
+  const value: AuthContextType = {
+    user,
+    userProfile,
+    loading,
+    setUser,
+    logout,
+    isAdmin,
+    isOwner,
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        loading,
-        login,
-        logout,
-        register,
-      }}
-    >
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
