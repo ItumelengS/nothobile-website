@@ -23,8 +23,32 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <div className="flex-1 container max-w-7xl mx-auto px-4 py-2 flex flex-col">
+    <div className="min-h-screen flex flex-col relative overflow-hidden">
+      {/* Background Plants */}
+      <div className="fixed inset-0 pointer-events-none opacity-10">
+        {/* Top Left Corner - Fern */}
+        <div className="absolute -top-20 -left-20 text-6xl text-nature rotate-12 animate-pulse">
+          🌿
+        </div>
+        {/* Top Right Corner - Aloe */}
+        <div className="absolute top-10 -right-10 text-5xl text-nature-dark -rotate-12">
+          🪴
+        </div>
+        {/* Bottom Left - Wild Herbs */}
+        <div className="absolute -bottom-10 -left-10 text-4xl text-earth rotate-45">
+          🌾
+        </div>
+        {/* Bottom Right - Spekboom */}
+        <div className="absolute -bottom-16 -right-16 text-7xl text-nature rotate-12 animate-pulse">
+          🌿
+        </div>
+        {/* Center Background - Scattered leaves */}
+        <div className="absolute top-1/4 left-1/4 text-3xl text-nature/50 rotate-45">🍃</div>
+        <div className="absolute top-3/4 right-1/4 text-2xl text-earth/50 -rotate-45">🍃</div>
+        <div className="absolute top-1/2 left-1/3 text-4xl text-nature/30 rotate-12">🌱</div>
+      </div>
+      
+      <div className="flex-1 container max-w-7xl mx-auto px-4 py-2 flex flex-col relative z-10">
         {/* Hero Section - Compact */}
         <div className="text-center py-1">
           <h1 className="text-3xl font-bold text-earth drop-shadow-sm flex items-center justify-center gap-2">

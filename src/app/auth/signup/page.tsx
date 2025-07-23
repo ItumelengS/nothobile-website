@@ -63,8 +63,22 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4 relative overflow-hidden">
+      {/* Background Plants - Welcoming Eastern Cape Flora */}
+      <div className="fixed inset-0 pointer-events-none opacity-8">
+        {/* New growth plants for signup */}
+        <div className="absolute top-5 left-5 text-6xl text-nature/25 rotate-10">🌱</div>
+        <div className="absolute top-15 right-8 text-5xl text-earth/30 -rotate-20">🌿</div>
+        <div className="absolute bottom-15 left-12 text-7xl text-nature/20 rotate-25">🪴</div>
+        <div className="absolute bottom-8 right-15 text-6xl text-earth/25 -rotate-15">🌾</div>
+        
+        {/* Growth symbolism */}
+        <div className="absolute top-1/4 right-1/5 text-4xl text-nature/20 rotate-60">🍃</div>
+        <div className="absolute bottom-1/4 left-1/5 text-3xl text-earth/25 -rotate-45">🍃</div>
+        <div className="absolute top-1/2 left-1/6 text-2xl text-nature/30 rotate-90">🌱</div>
+      </div>
+      
+      <div className="w-full max-w-md relative z-10">
         {/* Back Button */}
         <Link
           href="/"

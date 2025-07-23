@@ -63,8 +63,21 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4 relative overflow-hidden">
+      {/* Background Plants - Peaceful Eastern Cape Flora */}
+      <div className="fixed inset-0 pointer-events-none opacity-8">
+        {/* Healing plants around login area */}
+        <div className="absolute top-10 left-10 text-5xl text-nature/25 rotate-12">🌿</div>
+        <div className="absolute top-20 right-10 text-4xl text-earth/30 -rotate-15">🪴</div>
+        <div className="absolute bottom-20 left-15 text-6xl text-nature/20 rotate-30">🌾</div>
+        <div className="absolute bottom-10 right-20 text-5xl text-earth/25 -rotate-20">🌱</div>
+        
+        {/* Floating leaves for serenity */}
+        <div className="absolute top-1/3 left-1/4 text-3xl text-nature/20 rotate-45">🍃</div>
+        <div className="absolute bottom-1/3 right-1/4 text-2xl text-earth/25 -rotate-30">🍃</div>
+      </div>
+      
+      <div className="w-full max-w-md relative z-10">
         {/* Back Button */}
         <Link
           href="/"

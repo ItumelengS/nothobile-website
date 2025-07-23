@@ -146,8 +146,23 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container max-w-6xl mx-auto px-4 py-6">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Background Plants - Eastern Cape Traditional Medicine Plants */}
+      <div className="fixed inset-0 pointer-events-none opacity-8">
+        {/* Traditional healing plants in corners */}
+        <div className="absolute -top-12 -left-12 text-7xl text-nature/20 rotate-15">🌿</div>
+        <div className="absolute top-5 -right-18 text-6xl text-earth/25 -rotate-20">🪴</div>
+        <div className="absolute -bottom-15 -left-18 text-8xl text-nature/15 rotate-30">🌾</div>
+        <div className="absolute -bottom-10 -right-15 text-7xl text-earth/20 -rotate-25">🌱</div>
+        
+        {/* Medicinal herbs scattered */}
+        <div className="absolute top-1/5 left-1/6 text-4xl text-nature/20 rotate-45">🍃</div>
+        <div className="absolute top-1/2 right-1/4 text-3xl text-earth/25 -rotate-60">🍃</div>
+        <div className="absolute bottom-1/3 left-1/3 text-5xl text-nature/15 rotate-75">🌱</div>
+        <div className="absolute top-3/4 right-1/6 text-4xl text-earth/20 -rotate-45">🌿</div>
+      </div>
+      
+      <div className="container max-w-6xl mx-auto px-4 py-6 relative z-10">
         {/* Header */}
         <Link
           href="/cart"

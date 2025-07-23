@@ -156,7 +156,31 @@ function ProductsContent() {
     : 'from-earth/80 to-earth-dark/80';
 
   return (
-    <div className="min-h-screen bg-background relative">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Background Plants - Eastern Cape Flora */}
+      <div className="fixed inset-0 pointer-events-none opacity-8">
+        {/* Spekboom clusters */}
+        <div className="absolute top-20 -left-16 text-8xl text-nature/30 rotate-12">🌿</div>
+        <div className="absolute top-60 -right-20 text-6xl text-nature/20 -rotate-12">🌿</div>
+        
+        {/* Aloe plants */}
+        <div className="absolute bottom-40 -left-10 text-7xl text-earth/25 rotate-45">🪴</div>
+        <div className="absolute top-1/3 right-10 text-5xl text-nature/15 -rotate-30">🪴</div>
+        
+        {/* Wild herbs and grasses */}
+        <div className="absolute bottom-20 right-1/4 text-6xl text-earth/20 rotate-12">🌾</div>
+        <div className="absolute top-1/4 left-1/5 text-4xl text-nature/25 -rotate-45">🌾</div>
+        
+        {/* Indigenous medicinal plants */}
+        <div className="absolute top-3/4 left-1/3 text-5xl text-nature/20 rotate-30">🌱</div>
+        <div className="absolute top-1/6 right-1/3 text-3xl text-earth/30 -rotate-15">🌱</div>
+        
+        {/* Scattered leaves */}
+        <div className="absolute top-1/2 left-10 text-4xl text-nature/15 rotate-90">🍃</div>
+        <div className="absolute bottom-1/3 right-16 text-3xl text-earth/20 -rotate-45">🍃</div>
+        <div className="absolute top-2/3 right-1/2 text-2xl text-nature/25 rotate-60">🍃</div>
+      </div>
+
       {/* Background Image for sections */}
       {section && (
         <div className="absolute inset-0 z-0">

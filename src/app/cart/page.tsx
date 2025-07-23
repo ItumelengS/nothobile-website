@@ -35,8 +35,22 @@ export default function CartPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container max-w-7xl mx-auto px-4 py-6">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Background Plants */}
+      <div className="fixed inset-0 pointer-events-none opacity-8">
+        {/* Corner medicinal plants */}
+        <div className="absolute -top-10 -left-10 text-6xl text-nature/20 rotate-12">🌿</div>
+        <div className="absolute -top-5 -right-15 text-5xl text-earth/25 -rotate-12">🪴</div>
+        <div className="absolute -bottom-10 -left-15 text-7xl text-nature/15 rotate-45">🌾</div>
+        <div className="absolute -bottom-8 -right-12 text-6xl text-earth/20 -rotate-30">🌱</div>
+        
+        {/* Floating leaves */}
+        <div className="absolute top-1/4 left-1/6 text-3xl text-nature/20 rotate-45">🍃</div>
+        <div className="absolute top-2/3 right-1/5 text-2xl text-earth/25 -rotate-30">🍃</div>
+        <div className="absolute top-1/2 right-1/3 text-4xl text-nature/15 rotate-60">🌱</div>
+      </div>
+      
+      <div className="container max-w-7xl mx-auto px-4 py-6 relative z-10">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-earth">Shopping Cart</h1>
           <Link
