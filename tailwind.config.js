@@ -49,6 +49,22 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // Nothobile brand colors extracted from images
+        earth: {
+          DEFAULT: "#8B6F47",
+          light: "#A68B5B",
+          dark: "#6B5537",
+        },
+        nature: {
+          DEFAULT: "#4A7C59",
+          light: "#6B9F7F",
+          dark: "#2F5233",
+        },
+        amber: {
+          DEFAULT: "#E89611",
+          light: "#FFB84D",
+          dark: "#C77F00",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

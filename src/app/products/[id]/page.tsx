@@ -1,9 +1,9 @@
 'use client';
 
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Plus, Minus } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useCart } from '@/contexts/CartContext';
 
 // Mock product data - same as in products page
@@ -34,12 +34,25 @@ const products = [
 
 export default function ProductDetailPage() {
   const params = useParams();
-  const { addToCart } = useCart();
+  const router = useRouter();
+  const { addToCart, cartItems } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [isAdding, setIsAdding] = useState(false);
+  const [isAdded, setIsAdded] = useState(false);
+  const [isInCart, setIsInCart] = useState(false);
+  const [cartQuantity, setCartQuantity] = useState(0);
   
   const productId = Number(params.id);
   const product = products.find(p => p.id === productId);
+  
+  useEffect(() => {
+    // Check if item is already in cart
+    const existingItem = cartItems.find(item => item.product_id === productId);
+    setIsInCart(!!existingItem);
+    if (existingItem) {
+      setCartQuantity(existingItem.quantity);
+    }
+  }, [cartItems, productId]);
   
   if (!product) {
     return (
@@ -70,7 +83,12 @@ export default function ProductDetailPage() {
     
     setTimeout(() => {
       setIsAdding(false);
+      setIsAdded(true);
     }, 1000);
+  };
+
+  const handleCheckout = () => {
+    router.push('/cart');
   };
   
   const incrementQuantity = () => {
@@ -168,13 +186,15 @@ export default function ProductDetailPage() {
               </div>
               
               <button
-                onClick={handleAddToCart}
+                onClick={isAdded || isInCart ? handleCheckout : handleAddToCart}
                 disabled={isAdding || product.inventory_count === 0}
                 className={`w-full py-3 px-4 rounded-md font-medium transition-colors ${
                   product.inventory_count === 0
                     ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                     : isAdding
                     ? 'bg-green-600 text-white'
+                    : isAdded || isInCart
+                    ? 'bg-amber-500 hover:bg-amber-600 text-amber-950'
                     : 'bg-green-500 hover:bg-green-600 text-white'
                 }`}
               >
@@ -182,8 +202,21 @@ export default function ProductDetailPage() {
                   ? 'Out of Stock'
                   : isAdding
                   ? 'Adding to Cart...'
+                  : isAdded || isInCart
+                  ? 'Go to Cart'
                   : 'Add to Cart'}
               </button>
+              
+              {isInCart && !isAdded && (
+                <div className="mt-3 p-3 bg-amber-50 rounded-lg border border-amber-200">
+                  <p className="text-sm text-amber-900 font-medium">
+                    ✓ Already in cart ({cartQuantity} {cartQuantity === 1 ? 'item' : 'items'})
+                  </p>
+                  <p className="text-xs text-amber-700 mt-1">
+                    Click &ldquo;Go to Cart&rdquo; to adjust quantity
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>

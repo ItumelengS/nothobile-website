@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 
 interface CartItem {
   id: number;
@@ -31,24 +31,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(false);
   const [sessionId, setSessionId] = useState<string>('');
 
-  // Generate session ID for non-authenticated users
-  useEffect(() => {
-    let id = localStorage.getItem('nothobile-session-id');
-    if (!id) {
-      id = `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      localStorage.setItem('nothobile-session-id', id);
-    }
-    setSessionId(id);
-  }, []);
-
-  // Load cart from database when session ID is available
-  useEffect(() => {
-    if (sessionId) {
-      loadCart();
-    }
-  }, [sessionId]); // loadCart is stable and doesn't need to be in deps
-
-  const loadCart = async () => {
+  const loadCart = useCallback(async () => {
     try {
       const response = await fetch(`/api/cart?sessionId=${sessionId}`);
       if (response.ok) {
@@ -64,16 +47,40 @@ export function CartProvider({ children }: { children: ReactNode }) {
           image_url: item.product.image_url,
         }));
         setCartItems(formattedItems);
+        console.log('Cart loaded from API:', formattedItems);
+      } else {
+        throw new Error('API response not ok');
       }
     } catch (error) {
-      console.error('Failed to load cart:', error);
-      // Fallback to localStorage for development
+      console.error('Failed to load cart from API:', error);
+      console.log('Loading cart from localStorage...');
+      
+      // Fallback to localStorage
       const savedCart = localStorage.getItem('nothobile-cart');
       if (savedCart) {
-        setCartItems(JSON.parse(savedCart));
+        const parsedCart = JSON.parse(savedCart);
+        setCartItems(parsedCart);
+        console.log('Cart loaded from localStorage:', parsedCart);
       }
     }
-  };
+  }, [sessionId]);
+
+  // Generate session ID for non-authenticated users
+  useEffect(() => {
+    let id = localStorage.getItem('nothobile-session-id');
+    if (!id) {
+      id = `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      localStorage.setItem('nothobile-session-id', id);
+    }
+    setSessionId(id);
+  }, []);
+
+  // Load cart from database when session ID is available
+  useEffect(() => {
+    if (sessionId) {
+      loadCart();
+    }
+  }, [sessionId, loadCart]);
 
   const addToCart = async (product: { id: number; name: string; traditional_name: string; price: number; size: string; image_url?: string }, quantity = 1) => {
     setLoading(true);
@@ -96,32 +103,35 @@ export function CartProvider({ children }: { children: ReactNode }) {
         throw new Error('Failed to add to cart');
       }
     } catch (error) {
-      console.error('Failed to add to cart:', error);
-      // Fallback to localStorage
+      console.error('Failed to add to cart via API:', error);
+      console.log('Using localStorage fallback...');
+      
+      // Always use localStorage fallback for now
       setCartItems(prevItems => {
         const existingItem = prevItems.find(item => item.product_id === product.id);
         
+        let newItems;
         if (existingItem) {
-          const newItems = prevItems.map(item =>
+          newItems = prevItems.map(item =>
             item.product_id === product.id
               ? { ...item, quantity: item.quantity + quantity }
               : item
           );
-          localStorage.setItem('nothobile-cart', JSON.stringify(newItems));
-          return newItems;
+        } else {
+          newItems = [...prevItems, { 
+            id: Date.now(), 
+            product_id: product.id, 
+            name: product.name,
+            traditional_name: product.traditional_name,
+            price: product.price,
+            size: product.size,
+            image_url: product.image_url,
+            quantity 
+          }];
         }
         
-        const newItems = [...prevItems, { 
-          id: Date.now(), 
-          product_id: product.id, 
-          name: product.name,
-          traditional_name: product.traditional_name,
-          price: product.price,
-          size: product.size,
-          image_url: product.image_url,
-          quantity 
-        }];
         localStorage.setItem('nothobile-cart', JSON.stringify(newItems));
+        console.log('Cart updated:', newItems);
         return newItems;
       });
     } finally {

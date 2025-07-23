@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { ReactNode } from 'react';
-// Using regular img tag to avoid Next.js Image component issues
+import { easternCapeElements } from '@/lib/weather';
 
 interface SectionCardProps {
   title: string;
@@ -19,7 +19,7 @@ interface SectionCardProps {
 
 export function SectionCard({ title, icon, href, gradient, image, moveDown = '0', zoom = 1, categories }: SectionCardProps) {
   return (
-    <div className="relative rounded-lg overflow-hidden h-full">
+    <Link href={href} className="relative block rounded-lg overflow-hidden h-full min-h-[280px] group">
       {/* Background Image */}
       <div className="absolute inset-0 w-full h-full overflow-hidden">
         <div className="w-full h-full relative">
@@ -41,14 +41,26 @@ export function SectionCard({ title, icon, href, gradient, image, moveDown = '0'
         </div>
       </div>
       
-      {/* Gradient Overlay */}
+      {/* Gradient Overlay with Eastern Cape pattern */}
       <div className={`absolute inset-0 bg-gradient-to-r ${gradient} opacity-90`} />
+      <div 
+        className="absolute inset-0 opacity-10" 
+        style={{
+          backgroundImage: title.includes('Human') ? 
+            easternCapeElements.patterns.aloe : 
+            easternCapeElements.patterns.xhosa,
+          backgroundSize: '20px 20px'
+        }} 
+      />
       
       {/* Content */}
       <div className="relative z-10 p-4 h-full flex flex-col">
         <div className="flex items-center gap-2 mb-2">
           {icon}
-          <h2 className="text-lg font-bold text-white drop-shadow-md">{title}</h2>
+          <h2 className="text-lg font-bold text-white drop-shadow-md flex items-center gap-1">
+            {title}
+            <span className="text-sm">{title.includes('Human') ? '🏔️' : '🌊'}</span>
+          </h2>
         </div>
         
         <div className="space-y-1 mb-3 flex-1">
@@ -61,13 +73,10 @@ export function SectionCard({ title, icon, href, gradient, image, moveDown = '0'
           ))}
         </div>
         
-        <Link
-          href={href}
-          className="block w-full bg-white/20 hover:bg-white/30 text-center py-2 rounded-md font-medium text-white transition-colors backdrop-blur-sm"
-        >
-          Shop Now
-        </Link>
+        <div className="w-full text-center py-2 px-4 font-semibold text-white bg-black/20 hover:bg-black/30 transition-colors backdrop-blur-sm border-t border-white/20">
+          View Details
+        </div>
       </div>
-    </div>
+    </Link>
   );
 }
